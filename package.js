@@ -14,9 +14,13 @@ Package.onUse(function(api) {
   api.versionsFrom('1.2.1');
   api.use('ecmascript', 'client');
   api.use('underscore', 'client');
+  api.use('tracker', 'client');
+  api.use('reactive-var', 'client');
+  api.use('reactive-dict', 'client');
   api.use('lai:collection-extensions@0.2.1_1', 'client');
   api.use('aldeed:collection2@2.8.0', 'client', {weak: true});
-  api.addFiles('autolimit.js', 'client');
+  api.addFiles(['cache.js', 'autolimit.js'], 'client');
+  api.export('CachedItem', 'client');
 });
 
 Package.onTest(function(api) {

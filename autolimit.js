@@ -3,8 +3,9 @@
     let self = this;
     let argArray = _.toArray(arguments);
     let options = self._getFindOptions(argArray);
+    let currentComputation = Tracker.currentComputation;
 
-    if(!options.fields && self.simpleSchema()) {
+    if(currentComputation && !options.fields && self.simpleSchema()) {
       options = options || {};
       options.fields = {_id: 1};
       let origTransform = options.transform;
@@ -13,15 +14,13 @@
         self.simpleSchema().objectKeys().forEach((field) => {
           Object.defineProperty(doc, field, {
             get: function() {
-              let fields = {};
-              console.log(field, this);
-              fields[field] = 1;
-
-              let item = self.findOne({_id: this._id}, {fields, bla: true, transform: null});
-              return item && item[field];
+              let item = CachedItem.get(self, this._id);
+              item.addDependency(currentComputation);
+              item.addField(field);
+              return item.getValue(field);
             }
           })
-        })
+        });
         return doc;
       }
     }
